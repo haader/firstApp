@@ -1,0 +1,121 @@
+import { Button } from 'react-native-paper';
+import * as SQLite from 'expo-sqlite';
+import { ScrollView, TextInput } from 'react-native-gesture-handler';
+
+//importamos los iconos
+import { AntDesign } from '@expo/vector-icons';
+
+
+//seccion de prueba
+    // const [cont,setCont]=useState(0);
+    
+    //administrador de base de datos
+    const [nameTabla,setNameTabla]=useState("");
+    const db= SQLite.openDatabase('taskApp.db');
+
+    //variables para cambiar el nombre de la tabla
+    const [nameTablaEditar,setNameTablaEditar]=useState('');
+    const [newNameTablaEditar,setNewNameTablaEditar]=useState('');
+
+    const verTablas=()=>{
+        db.transaction(tx=>{
+            tx.executeSql('SELECT * FROM sqlite_master WHERE type = "table"',null,
+            
+            (obj,resultSet)=>{
+                console.log("***************");
+                
+                resultSet.rows._array.forEach((element)=>{
+                    console.log(element.name);
+                })
+                    
+                console.log("***************");
+            },(obj,error)=>{console.log(error)})
+        })
+    }
+    return(
+        
+        <View style={estilos.column}>
+            {/* <Buttons></Buttons> */}
+            <Button onPress={verTablas}>ver tablas</Button>
+
+                <Text style={{fontSize:25}}>Edirar Nombre de la Tabla</Text>
+
+                        <View style={{display:'flex',flexDirection:'row'}}>
+                            <Text>Nombre de la tabla a renombrar:</Text>
+                            <TextInput styles={{backgroundColor:'white'}} onChangeText={setNameTablaEditar}></TextInput>
+                        </View>
+
+                        <View style={{display:'flex',flexDirection:'row'}}>
+                            <Text>Nuevo nombre:</Text>
+                            <TextInput styles={{backgroundColor:'white'}} onChangeText={setNewNameTablaEditar}></TextInput>
+                        </View>
+            
+
+            <Button style={{marginTop:40}} onPress={()=>{
+                            db.transaction(tx=>{
+                                // tx.executeSql(`ALTER TABLE '${nameTablaEditar}' RENAME TO '${newNameTablaEditar}'`,null,
+                                
+                                // tx.executeSql(`ALTER TABLE IF EXISTS 'Adri50' RENAME TO 'Rock100'`,null,
+                                tx.executeSql(`SELECT name FROM sqlite_master WHERE type='table' AND name='Adri50'`,null,
+                                (obj,resultSet)=>{
+                                    console.log("resultSet: "+JSON.stringify(resultSet));
+                                    if(resultSet.rows.length==1){
+                                         tx.executeSql(`ALTER TABLE 'Adri50' RENAME TO 'Rock100'`,null,
+                                         (obj,resultSet)=>{
+                                            console.log("***se cambio el nombre de la tabla***");
+                                            verTablas
+                                        },(obj,error)=>{console.log("no hay tabla con ese nombre: "+error)})
+                                    }
+                                },(obj,error)=>{console.log(error)})
+                            })
+                            }}>Cambiar Nombre</Button>
+
+
+            <TextInput style={{width:'80%',textAlign:'center',height:60,margin:40}} placeholder={'ingrese name tabla'} onChangeText={setNameTabla}></TextInput>
+            
+            
+            <Button onPress={()=>{
+                db.transaction(tx=>{
+                    tx.executeSql(`DROP TABLE '${nameTabla}'`,null,(obj,resultSet)=>{
+                        
+                            console.log("se elimino la tabla con nombre "+nameTabla)
+
+                        
+                    },(obj,error)=>{console.log(error)})
+                })
+                
+            }}>eliminar tabla</Button>
+        </View>
+        
+    )
+// termina la seccion de prueba
+
+
+
+    // return(
+    //     <View style={estilos.column}>
+    //         <Text>¿Como Colaborar?</Text>
+    //         <Text>Puedes ayudarme enviadome "Cafecitos"</Text>
+    //         <Button style={estilos.button}>Eviar Cafesitos</Button>
+    //     </View>
+    // )
+}
+
+const estilos=StyleSheet.create({
+
+    column:{
+        display:'flex',
+        flexDirection:'column'
+    },
+    row:{
+        display:'flex',
+        flexDirection:'row'
+    },
+    texto:{
+
+    },
+    button:{
+
+    }
+
+})
