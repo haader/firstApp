@@ -46,9 +46,9 @@ const ScreenDev=()=>{
                         <AntDesign name="github" size={24} color="black" /><Text>  Git-Hub</Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={styles.row} onPress={()=>openURL('https://wa.link/jem6yt')}>
+                    {/* <TouchableOpacity style={styles.row} onPress={()=>openURL('https://wa.link/jem6yt')}>
                         <FontAwesome name="whatsapp" size={24} color="green" /><Text>  Whatsapp</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>
                 {/* <Text>Descripción:</Text>
                 <Text>AppTareas es una aplicación donde usted prodra organizar sus tareas por Secciones en configuraciones</Text> */}

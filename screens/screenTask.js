@@ -1,13 +1,18 @@
-import React, { Component } from "react";
+import React, { useContext } from "react";
 
 import { Modal, StyleSheet, Text, View, TextInput, Alert,ScrollView,TouchableOpacity } from 'react-native';
 import * as SQLite from 'expo-sqlite';
 import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
+//efectos
+import { useFocusEffect } from "@react-navigation/native";
+//cargamos el componente loading
+import Loading from '../componentes/Loading';
 //iconos
 import { AntDesign } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
+import { ConfiguracionesContext } from "../componentes/ConfiguracionesContext";
 //alerta con input
 
 
@@ -16,12 +21,14 @@ import { Ionicons } from '@expo/vector-icons';
 //      nameScreen,dbScreen
 const ScreenTask=(props)=>{
 
+  const {ConfiguracionesCustom,setConfiguracionesCustom}=useContext(ConfiguracionesContext);
+
     console.log("screnName= "+props.screnName);
     console.log("dbName= "+props.dbName);
     
     const db= SQLite.openDatabase('taskApp.db');
     const [isLoading,setIsLoading]= useState(false); //es un booleano
-    const [fullTable,setFullTable]= useState(false); //BOOLEANO PARA NULL TABLE
+    const [fullTable,setFullTable]= useState(true); //BOOLEANO PARA NULL TABLE
     const [names,setNames]=useState([]);//es un array
     const [currentName,setCurrentName]=useState(undefined);
     //agregamos la variable para el modal
@@ -33,26 +40,18 @@ const ScreenTask=(props)=>{
     const [valueEditTask,setValueEditTask]=useState("");
     const[idEditTask,setIdEditTask]=useState(0);
   
+    useEffect(()=>{
+        console.log("ATENCION: =>=> DENTRO <=<= del call back");
+           iniciar()
+        // return () => console.log("ATENCION: =>=> FUERA <=<= del call back");
+    },[])
 
-  useEffect(()=>{
-    iniciar()
-  },[]);
 
-  if(isLoading){
-    return(
-      <View style={{width:'100%',height:'100%',alignItems: 'center',
-      justifyContent: 'center',}}>
-        <View style={styles.girar}></View>
-        <Text>Cagando {props.screnName} Pendientes...</Text>
-      </View>
-    );
-  }
-
+ 
   //funciones
-
   const iniciar=()=>{
     setIsLoading(true);
-        setTimeout(()=>{
+          setTimeout(()=>{
 
                 db.transaction(tx=>{
                   //si no existe creo la tabla names!
@@ -88,10 +87,32 @@ const ScreenTask=(props)=>{
                     );
                 });
 
-        setIsLoading(false);
+            setIsLoading(false);
 
-        },1000);
+        },2000);
   }
+
+  //pantalla de carga
+  //
+  const showMensageEmpity=()=>{
+    
+      return(
+        <View key={"idNoName"} style={styles.row}>
+          <Text>No se encontraron datos existentes</Text>
+        </View>
+      );
+  }
+
+  const showLoading=()=>{
+    return(
+      <Loading style={{backgroundColor:'blue'}} color='red'/>
+    )
+  }
+//
+//FIN pantalla de carga
+
+//deprecado
+//
   const deleteTable=()=>{
     return Alert.alert(
       "EStas seguro?",
@@ -120,6 +141,9 @@ const ScreenTask=(props)=>{
 
     
   }
+//  
+//fin deprecado
+
   const addTask=()=>{
 
     if((currentName!=='')&&(currentName!==undefined)){
@@ -137,7 +161,6 @@ const ScreenTask=(props)=>{
       });
        
     setFullTable(true);
-    showMensageEmpity();
     showTareas();
 
 
@@ -151,18 +174,7 @@ const ScreenTask=(props)=>{
     console.log("currentName ("+props.screnName+"): "+currentName);
     
   };
-
-  const showMensageEmpity=()=>{
-    if(fullTable==false){
-      return(
-        <View key={"idNoName"} style={styles.row}>
-          <Text>No se encontraron datos existentes</Text>
-        </View>
-      );
-    }
-  }
-
-
+  
 //metodos check
   const checkTask=(id)=>{
     //actualizaos el STATE que es un boleano en la base de datos
@@ -197,7 +209,6 @@ const ScreenTask=(props)=>{
     //pintaoss los datos desde el array "name"
     showTareas();
   }
-
 //metodos update delete
   const deleteTask=(id)=>{
                   //metodo comfirm
@@ -233,7 +244,6 @@ const ScreenTask=(props)=>{
                   ]
                 );
   }
-
 const editTask=(id)=>{
 
 Alert.alert("Editar tarea", "¿Realmente desea editar esta tarea?",[
@@ -271,7 +281,6 @@ Alert.alert("Editar tarea", "¿Realmente desea editar esta tarea?",[
 ])
 
   }
-
 //se apreta en el modal editartask en el btn (guardar)
 const saveEditTask=(id)=>{
   //para futuras versiones arreglar la edición de las tareas
@@ -297,8 +306,6 @@ const saveEditTask=(id)=>{
       (obj,error)=>{console.log(error)})
     })  
 }
-
-
 const showTareas=()=>{
     
     return names.map((name,index)=>{
@@ -310,7 +317,7 @@ const showTareas=()=>{
                                   width:'100%',
                                   marginBottom:10,
                                   borderRadius:10,
-                                  backgroundColor:'white',
+                                  backgroundColor:'red',
                                   borderWidth:1,
                                   }}>
 
@@ -321,10 +328,11 @@ const showTareas=()=>{
                width:40,
                borderTopLeftRadius:10,
                borderBottomLeftRadius:10,
-               backgroundColor:name.state?'rgb(184, 245, 181 )':'white',
+               backgroundColor:name.state?ConfiguracionesCustom[0].taskcheck:ConfiguracionesCustom[0].taskuncheck,
                justifyContent:'center',
                alignItems:'center'
             }} onPress={()=>checkTask(name.id)}>
+              {/* //establecemos el color del icono dependiendo si la variable state es true o false */}
               <Feather name={name.state?'check-circle':'circle'} size={24} color={name.state?'green':"black"}  />
             </TouchableOpacity>
 
@@ -333,7 +341,8 @@ const showTareas=()=>{
                                       alignItems:'center',
                                       alignSelf:'stretch',
                                       justifyContent:'space-between',
-                                      backgroundColor:name.state?'rgb(184, 245, 181 )':'white',
+                                      // backgroundColor:name.state?'rgb(184, 245, 181 )':'white',
+                                      backgroundColor:name.state?ConfiguracionesCustom[0].taskcheck:ConfiguracionesCustom[0].taskuncheck,
                                       width:'80%',
                                     height:40,
                                   paddingLeft:10}} 
@@ -359,15 +368,11 @@ const showTareas=()=>{
       );
     });
   };
-
-
-
   const input= ()=>{
     return(
       <TextInput style={styles.input} value={currentName} placeholder={`Pendientes ${props.screnName}`} onChangeText={setCurrentName}></TextInput>
     )
   }
-
   const ViewTask=()=>{
     return(
       <View style={{display:'flex',alignItems:'center',justifyContent:'center'}}>
@@ -375,14 +380,13 @@ const showTareas=()=>{
       </View>
     )
   }
-  
   /////******************************** */ PRINCIPAL
   return (
-    <View style={styles.container}>
+    <View style={[styles.container,{backgroundColor:ConfiguracionesCustom[0].backgroundviewapp}]}>
 
-          <View style={styles.titleContainer}>
+          <View style={[styles.titleContainer,{backgroundColor:ConfiguracionesCustom[0].backgroundviewapp}]}>
 
-              <Text style={styles.titleText}>
+              <Text style={[styles.titleText,{backgroundColor:ConfiguracionesCustom[0].colortitle}]}>
                 
                 {/* TITULO DE LA TAREA */}
                 {props.screnName}
@@ -395,14 +399,13 @@ const showTareas=()=>{
 
           <View style={styles.ViewListTareas}>
 
-              <ScrollView>
+              <ScrollView style={{height:'100%'}}>
                     
-                    <View style={styles.Sololist}>
-                        {showMensageEmpity()}
-                        {showTareas()}
-                    </View>
-                
-                    <StatusBar style="auto" />
+                    {/* ----LOADING---() */}
+                    <View style={{width:'100%', justifyContent:'center',height:'100%'}}  children={isLoading?showLoading():fullTable?showTareas():showMensageEmpity()}/>
+
+                    {/* <StatusBar style="auto" /> */}
+
               </ScrollView>
 
           </View>
@@ -555,7 +558,7 @@ const showTareas=()=>{
                   </View>
 
           </Modal>
-
+    {/* {setIsLoading(false)} */}
     </View>
   );
 }
@@ -699,10 +702,14 @@ const styles = StyleSheet.create({
     girar:{
       width:50,
       height:50,
-      borderWidth:3,
-      borderColor:'blue',
+      borderTopWidth:1,
+      borderRightWidth:1,
+      borderBottomWidth:1,
+      borderLeftWidth:3,
+      borderColor:'#ccc',
       borderRadius:25,
-      borderLeftWidth:0,
+      
+      borderLeftColor:'red',
       
     }
   });

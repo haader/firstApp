@@ -1,9 +1,12 @@
-import {React, useState} from 'react';
+import {React, useContext, useState} from 'react';
 import {View, Text, StyleSheet,TouchableOpacity, FlatList, Button, Linking, Image} from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
+import { ConfiguracionesContext } from '../componentes/ConfiguracionesContext';
 
 
 const ScreenHelp=()=>{
+
+    const {ConfiguracionesCustom, setConfiguracionesCustom}=useContext(ConfiguracionesContext)
 
     const OpenURL=(url)=>{
         Linking.openURL(url)
@@ -11,7 +14,7 @@ const ScreenHelp=()=>{
 return(
 <View style={{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center'}}>
 
-    <Text style={{fontSize:40, backgroundColor:'orange',borderRadius:10,padding:10,marginTop:10}}>¿Deseas ayudarnos?</Text>
+    <Text style={{fontSize:40, backgroundColor:ConfiguracionesCustom[0].colortitle,borderRadius:10,padding:10,marginTop:10}}>¿Deseas ayudarnos?</Text>
 
     <Image style={{width:100,height:100,margin:20,borderWidth:2,borderColor:'black', borderRadius:50}} source={require('../assets/logo.png')}></Image>
     

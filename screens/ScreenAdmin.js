@@ -1,20 +1,26 @@
-import React, { Component } from "react";
+import React, { Component, useContext } from "react";
 
 import { StyleSheet, Modal, Text, View, TextInput, Alert,ScrollView,TouchableOpacity } from 'react-native';
 import * as SQLite from 'expo-sqlite';
 import { useState, useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
+//importamos Loading
+import Loading from '../componentes/Loading'
 //iconos
 import { AntDesign } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
 import { FlatList } from "react-native-gesture-handler";
 import { useFocusEffect } from "@react-navigation/native";
+import { ConfiguracionesContext } from "../componentes/ConfiguracionesContext";
 
 
 //alerta con input
 
-const ScreenAdmin=(props)=>{
+const ScreenAdmin=({ navigation })=>{
+
+  //obtenemos el contexto
+  const {ConfiguracionesCustom,setConfiguracionesCustom}=useContext(ConfiguracionesContext)
   
   // console.log("iniciando screen configuraciones")
     //creamos un crud para una tabla que se llama taskappSecciones 
@@ -45,14 +51,7 @@ const ScreenAdmin=(props)=>{
     iniciar();
   },[]);
 
-  if(isLoading){
-    return(
-      <View style={styles.container}>
-        <View style={styles.girar}></View>
-        <Text>Cargando las secciones...</Text>
-      </View>
-    );
-  }
+ 
 
   //funciones
   const iniciar=()=>{
@@ -100,8 +99,17 @@ const ScreenAdmin=(props)=>{
 
         setIsLoading(false);
 
-        },2000);
+        },1000);
   }
+  //LOADING
+  //
+  const loading=()=>{
+    return(
+      <Loading color='red'/>
+     );
+  }
+  //
+  //FIN LOADING
   const dropTable=()=>{
     return Alert.alert(
       "Estas seguro?",
@@ -126,13 +134,11 @@ const ScreenAdmin=(props)=>{
       ]
     );
 
-
-
-    
   }
   const addSeccion=()=>{
-
-    if((currentName!=='')&&(currentName!==undefined)){
+console.log("***********************************************");
+ 
+    if((currentName!=='')&&(currentName!==undefined)&&(!names.some(item => item.name === currentName))){
 
       db.transaction(tx=>{
         tx.executeSql(`INSERT INTO taskappSecciones (name,icon,show) values ('${currentName}','questioncircleo', 0)`,[],
@@ -153,7 +159,7 @@ const ScreenAdmin=(props)=>{
 
 
     }else{
-      alert("Agrege algun contenido a la tarea");
+      alert("El nombre ya existe en la lista o no se proporcionó un valor válido.");
     }
 
   
@@ -373,10 +379,10 @@ const saveEditSeccion=()=>{
                                               alignSelf:'stretch',
                                               justifyContent:'space-between',
                                               borderWidth:1,
-                                              borderColor:'black',
-                                             
+                                              borderColor:'black',        
                                               borderRadius:10,
-                                            backgroundColor:name.show?'green':'white',
+                                            // backgroundColor:name.show?'green':'white',
+                                            backgroundColor:name.show?ConfiguracionesCustom[0].sectioncheck:ConfiguracionesCustom[0].sectionuncheck,
                                           width:'100%',
                                         height:44}}
                 onPress={()=>changeViewSeccion(name.id,name.show)}>
@@ -426,12 +432,12 @@ const saveEditSeccion=()=>{
         
           return(
                   <FlatList style={styles.flatListModal}
-                  numColumns={4}
-                  data={AntDesign_iconos}
-                  renderItem={({item})=>
-                    <TouchableOpacity style={styles.rowIconModal} key={item.key}  onPress={()=>IconoElegido(item.key)}>
-                              <AntDesign name={item.key} size={30} color="black"/>
-                    </TouchableOpacity>
+                      numColumns={4}
+                      data={AntDesign_iconos}
+                      renderItem={({item})=>
+                        <TouchableOpacity style={styles.rowIconModal} key={item.key}  onPress={()=>IconoElegido(item.key)}>
+                                  <AntDesign name={item.key} size={30} color="black"/>
+                        </TouchableOpacity>
                   }/>
 
           )
@@ -481,12 +487,12 @@ const saveEditSeccion=()=>{
   
   /////******************************** */ PRINCIPAL
   return (
-    <View style={styles.container}>
+    <View style={[styles.container,{ backgroundColor:ConfiguracionesCustom[0].backgroundviewapp}]}>
 
-          <View style={styles.titleContainer}>
+          <View style={[styles.titleContainer,{ backgroundColor:ConfiguracionesCustom[0].backgroundviewapp}]}>
                     
                     <Text
-                    style={styles.titleText}>
+                    style={[styles.titleText,{ backgroundColor:ConfiguracionesCustom[0].colortitle}]}>
                       Secciones
                     </Text>
                     {/* <AntDesign name="minuscircle" size={35} color="red" onPress={dropTable}/> */}
@@ -498,11 +504,9 @@ const saveEditSeccion=()=>{
 
           <ScrollView style={styles.ListTareas}>
                 
-                <View style={styles.Sololist}>
-                    {showMensageEmpity()}
-                    {showSecciones()}
-                </View>
-                <StatusBar style="auto" />
+                <View style={{width:'100%',height:'100%'}} children={isLoading?loading():fullTable?showSecciones():showMensageEmpity()}/>
+                    
+                {/* <StatusBar style="auto" /> */}
 
           </ScrollView>
 
@@ -525,7 +529,7 @@ const saveEditSeccion=()=>{
                 left:'40%'
               }}
               onPress={()=>{
-                // navigation.navigate('Details')
+                navigation.navigate('Tareas')
               }}
               >
                   <AntDesign name='home' color='black' size={40}></AntDesign>

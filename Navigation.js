@@ -1,9 +1,11 @@
-import React from "react";
+import React, {useContext} from "react";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 //import { createNativeBottomTabNavigator } from "@react-navigation/native-bottom-tabs";
 import {StyleSheet,Text, View} from 'react-native';
 //efectos
 import { useFocusEffect } from "@react-navigation/native";
+//cargamos el componente loading
+import Loading from './componentes/Loading';
 //screen  => ambarScreen,melyScreen,comprarScreen,susanaScreen,deberesScreen
 import ScreenTask from "./screens/screenTask";
 import ScreenInicio from "./screens/ScreenInicio";
@@ -14,14 +16,17 @@ import { useState, useEffect } from 'react';
 
 import { AntDesign } from '@expo/vector-icons';
 
-
+import { ConfiguracionesContext } from './componentes/ConfiguracionesContext';
 
 
 
 const Tab=createBottomTabNavigator();
 
 
-const Navigation=(props)=>{
+const Navigation=({navigation})=>{
+
+  //variables traidas desde el context para actualizar los colores
+  const { ConfiguracionesCustom, setConfiguracionesCustom } = useContext(ConfiguracionesContext);
 
   console.log("entrando a Navigation")
     //conectamos con la base de datos
@@ -32,11 +37,14 @@ const Navigation=(props)=>{
     const array=[{"id": 2, "name": "Ambar"}, {"id": 3, "name": "susana"}, {"id": 4, "name": "Compras"}, {"id": 5, "name": "Deberes"}, {"id": 6, "name": "Yo"}]
 
   useFocusEffect(
+
     React.useCallback(() => {
       console.log("ATENCION: =>=> DENTRO <=<= del call back");
+      setIsLoading(true);
       CargarDatosTabla();
       return () => console.log("ATENCION: =>=> FUERA <=<= del call back");
     },[])
+
   );
 
 //vamos a comentarlo ya que useEffect se ejecuta despues del renderizado
@@ -48,83 +56,31 @@ const Navigation=(props)=>{
 
   if(isLoading){
     return(
-      <View style={styles.container}>
-      <View style={styles.girar}></View>
-      <Text>Cargando las secciones...</Text>
-    </View>
+        <Loading state={isLoading} color='orange'></Loading>
     );
   }
 
     const CargarDatosTabla =()=>{
       console.log("entro a =>=>=>cargarDatosTabla")
-        setIsLoading(true);
+        // setIsLoading(true);
         setTimeout(()=>{
             
             db.transaction(tx=>{
 
                 tx.executeSql('SELECT * FROM taskappSecciones',null,
                 (obj,setResult)=>{ // enviamos los objetos a la variable names que es un array!
-                  
-                 
     
                       //sí el lenght de los row es 0 la tabla esta vacia => se renderiza un mensaje
                 if(setResult.rows.length>0){
                               
                               setSecciones(setResult.rows._array);
                               setFullTable(true);
-                             // hay secciones disponibles
-                              // console.log("**************");
-                              // console.log("HAY secciones disponibles en Navigation ..renderizamos");
-                              // console.log("--Secciones en DB ==>: "+JSON.stringify(setResult.rows._array));
-                              // console.log("longitude del array= "+setResult.rows.length);
-                              // console.log("--secciones en [] ==>"+JSON.stringify(secciones));
-                              // console.log("**************");
-
-                              //pintamos el navigaitor con los datos traidos
-                             
-
-                              // setResult.rows._array.map((val, index) => (
-
-
-//   secciones.map((val, index) => (
-
-//   //console.log("vuelta "+index+" estado "+val.show),
-
-  
-  
-//   <Tab.Screen
-//     key={index}
-//     name={val.name}
-//                 options={{
-//                   tabBarLabel: val.name,
-//                   headerShown:false,
-//                   tabBarIcon:({color,size})=>(
-//                     <AntDesign name={val.icon} size={24} color="black" />
-//                               )
-//                         }}
-//     children={()=><ScreenTask screnName={val.name} dbName={val.name}></ScreenTask>}
-//   />    
-// ))
-
-                              
-                                                    
-                              
-
+                       
                 }else{
                   setFullTable(false);
-                  //NO hay secciones disponibles
-                  // console.log("NO hay secciones disponibles");
-
-// return(
-//   <View style={styles.container}>
-//     <Text>NO hay secciones Cargadas</Text>
-//   </View>
-// );
-                  
                 }
               },
               // (txObj,error)=>console.log("ATENCIÓN!!se encontro un error al leer la tabla taskappSecciones: "+error)
-              
               );
             
         })
@@ -135,13 +91,16 @@ const Navigation=(props)=>{
 }
 
 return(
+  
   <Tab.Navigator
   screenOptions={{
       tabBarActiveTintColor:'#7cc'
   }}
  >
           {/* <Tab.Screen name={'Inicio'} options={{headerShown:false,tabBarIcon:({color,size})=>(<AntDesign name="home" size={24} color="black"/>)}}children={()=><View style={{alignItems:'center',justifyContent:'center'}}><Text>Bienvenido a appTareas</Text></View>}></Tab.Screen> */}
-          <Tab.Screen name={'Inicio'} options={{headerShown:false,tabBarIcon:({focused,size})=>(<AntDesign name="home" size={24} color={focused?'#7cc':'#ccc'}/>)}}children={()=><ScreenInicio></ScreenInicio>}></Tab.Screen>
+          <Tab.Screen name={'Inicio'} 
+          options={{headerShown:false,tabBarIcon:({focused,size})=>(<AntDesign name="home" size={24} color={focused?ConfiguracionesCustom[0].navigateselect:ConfiguracionesCustom[0].navigateunselect}/>)}} 
+          component={ScreenInicio}/>
 
             {
               
@@ -155,7 +114,7 @@ return(
                           tabBarLabel: val.name,
                           headerShown:false,
                           tabBarIcon:({focused,size})=>(
-                            <AntDesign name={val.icon} size={24} color={focused?'#7ccc':'#ccc'} />
+                            <AntDesign name={val.icon} size={24} color={focused?ConfiguracionesCustom[0].navigateselect:ConfiguracionesCustom[0].navigateunselect} />
                                       )
                                 }}
             children={()=><ScreenTask screnName={val.name} dbName={val.name}></ScreenTask>
