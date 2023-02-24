@@ -43,7 +43,7 @@ const AnimatedTextView = ({ phrases }) => {
             setCurrentPhrase(phrases[(phraseIndex + 1) % phrases.length]);
             slideAnimation.setValue(-1000);
             setPaused(false);
-          }, 4000);
+          }, 5000);
         }
       });
     }
