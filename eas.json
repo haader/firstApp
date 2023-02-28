@@ -5,6 +5,14 @@
         "buildType": "apk"
       }
     },
+    "adrian":{
+      "android": {
+        "buildType": "apk",
+        "distribution": "store"
+      
+      },
+      "credentialsSource": "local"
+    },
     "preview2": {
       "android": {
         "gradleCommand": ":app:assembleRelease",
@@ -23,4 +31,5 @@
       }
     }
   }
+    
 }
