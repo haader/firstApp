@@ -27,7 +27,7 @@ const Navigation=({navigation})=>{
 
   //variables traidas desde el context para actualizar los colores
   const { ConfiguracionesCustom, setConfiguracionesCustom } = useContext(ConfiguracionesContext);
-
+  const [showSimpleScreen, setShowSimpleScreen] = useState(false);
   console.log("entrando a Navigation")
     //conectamos con la base de datos
     const db= SQLite.openDatabase('taskApp.db');

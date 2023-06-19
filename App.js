@@ -1,6 +1,7 @@
 import 'react-native-gesture-handler';
 
 import  Navigation from './Navigation';
+import NavegadorSecciones from './NavegadorSecciones'
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -50,7 +51,7 @@ export default function MyDrawer(){
 
                                   <FontAwesome5 name="tasks" size={24} color={focused?'#7cc':'#ccc'} />
 
-                                  )}} component={Navigation}>
+                                  )}} component={NavegadorSecciones}>
 
                         </Drawer.Screen>
 
