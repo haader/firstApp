@@ -19,7 +19,7 @@ import { ConfiguracionesContext } from "../componentes/ConfiguracionesContext";
 
 //dbName,
 //      nameScreen,dbScreen
-const ScreenTask=(props,{ setShowSimpleScreen })=>{
+const ScreenTask=(props)=>{
 
   const {ConfiguracionesCustom,setConfiguracionesCustom}=useContext(ConfiguracionesContext);
 
@@ -46,30 +46,7 @@ const ScreenTask=(props,{ setShowSimpleScreen })=>{
         // return () => console.log("ATENCION: =>=> FUERA <=<= del call back");
     },[])
 
-//boton volver
-const Back=()=>{
-  return(
-    <TouchableOpacity style={{width:80,
-      height:80,
-      backgroundColor:'pink',
-      borderRadius:40,
-      alignItems:'center',
-      justifyContent:'center',
-      borderWidth:1,
-     
-      }}
-      // onPress={()=>{
-      //     // navigation.navigate('Administrar secciones');
-      //     // //ScreenTask
-      //     <ScreenTask screnName={sectionName} dbName={sectionName}></ScreenTask>
-      // }}
 
-
-      onPress={() => setShowSimpleScreen(!showSimpleScreen)}>
-          <Text>Volver</Text>
-      </TouchableOpacity>
-  )
-}
  
   //funciones
   const iniciar=()=>{
@@ -581,8 +558,7 @@ const showTareas=()=>{
                   </View>
 
           </Modal>
-    {/* {setIsLoading(false)} */}
-    <Back></Back>
+    
     </View>
   );
 }

@@ -1,9 +1,13 @@
 import React, { useRef,useState,useContext, useEffect} from "react";
-import {View,Text,TouchableOpacity} from 'react-native';
+import {View,Text,TouchableOpacity, Button} from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useFocusEffect } from "@react-navigation/native";
 import * as SQLite from 'expo-sqlite';
 import ScreenTask from "./screens/screenTask";
+
+//creamos el navigate stack
+// import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
 //iconoss
 import { AntDesign } from '@expo/vector-icons';
@@ -31,33 +35,8 @@ const NavegadorSecciones=({navigation})=>{
     
       );
 
-      const SimpleScreen = () => {
-        return (
-          <View style={{width:'100%',height:'100%'}}>
-            <Text >¡Hola desde la pantalla sencilla!</Text>
-            <TouchableOpacity style={{width:80,
-                                height:80,
-                                backgroundColor:'pink',
-                                borderRadius:40,
-                                alignItems:'center',
-                                justifyContent:'center',
-                                borderWidth:1,
-                               
-                                }}
-                                // onPress={()=>{
-                                //     // navigation.navigate('Administrar secciones');
-                                //     // //ScreenTask
-                                //     <ScreenTask screnName={sectionName} dbName={sectionName}></ScreenTask>
-                                // }}
+      const Stack = createStackNavigator();
 
-
-                                onPress={() => setShowSimpleScreen(!showSimpleScreen)}>
-                                    <Text>Volver</Text>
-                                </TouchableOpacity>
-          </View>
-        );
-      };
-    
     const CargarDatosTabla =()=>{
         console.log("entro a =>=>=>cargarDatosTabla")
           // setIsLoading(true);
@@ -114,9 +93,10 @@ const NavegadorSecciones=({navigation})=>{
                                 //     // //ScreenTask
                                 //     <ScreenTask screnName={sectionName} dbName={sectionName}></ScreenTask>
                                 // }}
+                                onPress={() => navigation.navigate('Screen2',{ propName: sectionName })}
 
-
-                                onPress={() => {setShowSimpleScreen(true);setShowListSecciones(!ShowListSecciones)}}>
+                                //onPress={() => {setShowSimpleScreen(true);setShowListSecciones(!ShowListSecciones)}}
+                                >
                                    
                               
                                 
@@ -165,6 +145,31 @@ const NavegadorSecciones=({navigation})=>{
         )
     }
 
+    function Screen1() {
+      return (
+        <View style={{height:'100%'}}>
+
+        <ScreenListSecciones/>
+
+          {/* <Button
+            title="Cargar pantalla 2"
+            onPress={() => navigation.navigate('Screen2')}
+          /> */}
+        </View>
+      );
+    }
+
+    function Screen2({navigation,route }) {
+      const propName = route.params?.propName;
+  return (
+    <View style={{height:'100%'}}>
+      
+      <ScreenTask screnName={propName} dbName={propName} />
+      <Button title="Volver atrás" onPress={() => navigation.goBack()} />
+    </View>
+  );
+}
+
     const ScreenListSecciones=()=>{
         return(
 
@@ -200,19 +205,36 @@ const NavegadorSecciones=({navigation})=>{
         )
     }
 
+  //   <View style={{height:'100%'}}>  
+  //   {showSimpleScreen && <ScreenTask screnName='hola' dbName='hoellou' setShowSimpleScreen={setShowSimpleScreen} />}      
+    
+  //     {ShowListSecciones && <ScreenListSecciones/>}
+     
+  // </View>
+
     //scrollbar
     
     //for que lee la tabla y renderiza los commponentes
 
     //barra de fraces abajo de todo
     return(
+
+      
+      <Stack.Navigator initialRouteName="Screen1">
+        <Stack.Screen
+          name="Screen1"
+          component={Screen1}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Screen2"
+          component={Screen2}
+          options={{ headerShown: false}}
+        />
+      </Stack.Navigator>
+    
         
-        <View style={{height:'100%'}}>  
-          {showSimpleScreen && <ScreenTask setShowSimpleScreen={setShowSimpleScreen} />}      
-          
-            {ShowListSecciones && <ScreenListSecciones/>}
-           
-        </View>
+       
 
         
         
