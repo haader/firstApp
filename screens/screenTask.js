@@ -22,8 +22,9 @@ import { ConfiguracionesContext } from "../componentes/ConfiguracionesContext";
 const ScreenTask=(props)=>{
 
   const {ConfiguracionesCustom,setConfiguracionesCustom}=useContext(ConfiguracionesContext);
-
-    console.log("screnName= "+props.screnName);
+  const aFormatear=props.screnName;
+  const screnNameFormateado=aFormatear.replaceAll('_',' ');
+    console.log("screnName= "+screnNameFormateado);
     console.log("dbName= "+props.dbName);
     
     const db= SQLite.openDatabase('taskApp.db');
@@ -116,7 +117,7 @@ const ScreenTask=(props)=>{
   const deleteTable=()=>{
     return Alert.alert(
       "EStas seguro?",
-    `Realmente quieres eliminar la tabla "${props.screnName}"?`,
+    `Realmente quieres eliminar la tabla "${screnNameFormateado}"?`,
       [
         // The "Yes" button
         {
@@ -171,7 +172,7 @@ const ScreenTask=(props)=>{
   
 
     //alert(currentName)
-    console.log("currentName ("+props.screnName+"): "+currentName);
+    console.log("currentName ("+screnNameFormateado+"): "+currentName);
     
   };
   
@@ -370,7 +371,7 @@ const showTareas=()=>{
   };
   const input= ()=>{
     return(
-      <TextInput style={styles.input} value={currentName} placeholder={`Pendientes ${props.screnName}`} onChangeText={setCurrentName}></TextInput>
+      <TextInput style={styles.input} value={currentName} placeholder={`Pendientes ${screnNameFormateado}`} onChangeText={setCurrentName}></TextInput>
     )
   }
   const ViewTask=()=>{
@@ -389,7 +390,7 @@ const showTareas=()=>{
               <Text style={[styles.titleText,{backgroundColor:ConfiguracionesCustom[0].colortitle}]}>
                 
                 {/* TITULO DE LA TAREA */}
-                {props.screnName}
+                {screnNameFormateado}
 
               </Text>
                                     

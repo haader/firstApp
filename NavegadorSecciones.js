@@ -93,7 +93,7 @@ const NavegadorSecciones=({navigation})=>{
                                 //     // //ScreenTask
                                 //     <ScreenTask screnName={sectionName} dbName={sectionName}></ScreenTask>
                                 // }}
-                                onPress={() => navigation.navigate('Screen2',{ propName: sectionName })}
+                                onPress={() => navigation.navigate('Screen2',{ propName: sectionName})}
 
                                 //onPress={() => {setShowSimpleScreen(true);setShowListSecciones(!ShowListSecciones)}}
                                 >
@@ -109,7 +109,7 @@ const NavegadorSecciones=({navigation})=>{
 
                 </View>
                   
-                    <Text>{sectionName}</Text>
+                    <Text>{sectionName.replaceAll('_',' ')}</Text>
             </View>
         );
     }

@@ -55,6 +55,7 @@ const ScreenAdmin=({ navigation })=>{
 
   //funciones
   const iniciar=()=>{
+
     setIsLoading(true);
         setTimeout(()=>{
 
@@ -139,12 +140,15 @@ const ScreenAdmin=({ navigation })=>{
 console.log("***********************************************");
  
     if((currentName!=='')&&(currentName!==undefined)&&(!names.some(item => item.name === currentName))){
+//generamos un numero random para colocar un icono random
+//AntDesign_iconos.lenght: 47
+const randomNumber = Math.floor(Math.random() * 48);
 
       db.transaction(tx=>{
-        tx.executeSql(`INSERT INTO taskappSecciones (name,icon,show) values ('${currentName}','questioncircleo', 0)`,[],
+        tx.executeSql(`INSERT INTO taskappSecciones (name,icon,show) values ('${currentName.replaceAll(' ','_')}','${AntDesign_iconos[randomNumber].key}', 1)`,[],
         (txObj,resultSet)=>{
           let existingNames=[...names];
-          existingNames.push({id: resultSet.insertId, name: currentName, icon: 'questioncircleo', show: 0});
+          existingNames.push({id: resultSet.insertId, name: currentName, icon: AntDesign_iconos[randomNumber].key, show: 1});
           setNames(existingNames);
           setCurrentName(undefined);
           console.log(existingNames)
@@ -230,13 +234,15 @@ console.log("***********************************************");
                         //localizamos el nombre de la seccion
                         names.forEach((element)=>{
                           if(element.id==id){
+                            const aEliminar=element.name;
+                            const aEliminarFormateado=aEliminar.replaceAll(' ','_')
                             
                                         db.transaction(tx=>{
-                                          tx.executeSql(`DELETE FROM taskappSecciones WHERE name = ?`,[element.name],
+                                          tx.executeSql(`DELETE FROM taskappSecciones WHERE name = ?`,[aEliminarFormateado],
                                           (obj,resultSet)=>{
                                             if(resultSet.rowsAffected>0){
                                               
-                                              tx.executeSql(`DROP TABLE ${element.name}`,[],
+                                              tx.executeSql(`DROP TABLE ${aEliminarFormateado}`,[],
                                                       (obj,resultSet)=>{
                                                           if(resultSet>0){
                                                            console.log("se elimini el row "+element.name+" y la tabla "+element.name ); 
@@ -310,8 +316,10 @@ Alert.alert("Editar Seccion", "¿Realmente desea editar esta Seccion?",[
 
 const saveEditSeccion=()=>{
 
+  const nameFormateado=valueSeccionEdit.replaceAll(' ','_');
+  
   db.transaction(tx=>{
-    tx.executeSql(`UPDATE taskappSecciones SET name='${valueSeccionEdit}' WHERE id=${idEditSeccion}`,null,
+    tx.executeSql(`UPDATE taskappSecciones SET name='${nameFormateado}' WHERE id=${idEditSeccion}`,null,
           (obj,resultSet)=>{
             
             if(resultSet.rowsAffected>0){
@@ -321,7 +329,7 @@ const saveEditSeccion=()=>{
                   let newArray=[...names];
                   newArray.some((element,index)=>{
 
-                    element.id==idEditSeccion?element.name=valueSeccionEdit:null;
+                    element.id==idEditSeccion?element.name=valueSeccionEdit.replaceAll('',''):null;
                     console.log(index+" "+element.name );
                     return index==idEditSeccion;
 
@@ -331,10 +339,10 @@ const saveEditSeccion=()=>{
                     {showSecciones}
 
                   //renombramos la tabla
-                  tx.executeSql(`SELECT name FROM sqlite_master WHERE type='table' AND name='${valueOldSeccionEdit}'`,null,
+                  tx.executeSql(`SELECT name FROM sqlite_master WHERE type='table' AND name='${valueOldSeccionEdit.replaceAll(' ','_')}'`,null,
                         (obj,resultSet)=>{
                               if(resultSet.rows.length==1){
-                                tx.executeSql(`ALTER TABLE '${valueOldSeccionEdit}' RENAME TO '${valueSeccionEdit}'`,null,
+                                tx.executeSql(`ALTER TABLE '${valueOldSeccionEdit.replaceAll(' ','_')}' RENAME TO '${nameFormateado}'`,null,
                                           (obj,resultSet)=>{
                                             console.log("-se renombro la tabla");
                                             console.log("***************************");
