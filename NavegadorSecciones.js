@@ -117,14 +117,14 @@ const NavegadorSecciones=({navigation})=>{
     const BtnAdministrar=()=>{
         return(
 // /* boton "ir" */
-        <View style={{width:'100%',backgroundColor:'white',}}>
+        <View style={{width:'100%',height:'20%',backgroundColor:'white',justifyContent:'center'}}>
             <TouchableOpacity style={{
                 display:'flex',
                 flexDirection:'column',
                 width:80,
                 height:80,
                 borderRadius:50,
-                backgroundColor:ConfiguracionesCustom[0].backgroundbutton,
+                backgroundColor:'#ccc',
                 position:'relative',
                 zIndex:10,
                 bottom:0,
@@ -175,30 +175,30 @@ const NavegadorSecciones=({navigation})=>{
 
             <View>
                  <ScrollView style={{height:'80%',backgroundColor:'white'}}>
-                {/* //ACA VA EL FOR */}
-                <View style={{height:'100%',width:'100%',backgroundColor:'white',display:'flex',flexDirection:'row',flexWrap: 'wrap'}}>
+                    {/* //ACA VA EL FOR */}
+                    <View style={{height:'100%',width:'100%',backgroundColor:'white',display:'flex',flexDirection:'row',flexWrap: 'wrap'}}>
 
-        {                secciones.map((val, index) => (
+            {                secciones.map((val, index) => (
 
-                        //   console.log("vuelta "+index+" estado "+val.show),
-                            val.show == 1? <BtnSeccion
-                            key={index}
-                            sectionName={val.name}
-                            iconName={val.icon}
-                                
-                            // children={()=><ScreenTask screnName={val.name} dbName={val.name}></ScreenTask>}
-                            />: 
-                            console.log("")
-                            )
+                            //   console.log("vuelta "+index+" estado "+val.show),
+                                val.show == 1? <BtnSeccion
+                                key={index}
+                                sectionName={val.name}
+                                iconName={val.icon}
+                                    
+                                // children={()=><ScreenTask screnName={val.name} dbName={val.name}></ScreenTask>}
+                                />: 
+                                console.log("")
+                                )
 
-                            )
-}          
+                                )
+    }          
 
-                     </View>
-               
-            </ScrollView>
+                        </View>
+                  
+                  </ScrollView>
 
-            <BtnAdministrar/>
+                  <BtnAdministrar style={{position:'absolute'}}/>
 
             </View>
             
