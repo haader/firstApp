@@ -387,12 +387,18 @@ const showTareas=()=>{
 
           <View style={[styles.titleContainer,{backgroundColor:ConfiguracionesCustom[0].backgroundviewapp}]}>
 
-              <Text style={[styles.titleText,{backgroundColor:ConfiguracionesCustom[0].colortitle}]}>
-                
-                {/* TITULO DE LA TAREA */}
-                {screnNameFormateado}
+              <View style={[styles.contenedorTitle,{backgroundColor:ConfiguracionesCustom[0].colortitle}]}>
 
-              </Text>
+                    <AntDesign style={{margin:10, position:'absolute', left:0}} name={props.icon} color='black' size={24}></AntDesign>
+
+                    <Text style={[styles.titleText,{maxWidth:'85%',textAlignVertical:'center'}]} numberOfLines={1}>
+                    
+                      {/* TITULO DE LA TAREA */}
+                      {screnNameFormateado}
+
+                    </Text>
+                    <AntDesign style={{margin:10, position:'absolute', right:0}} name={props.icon} color='black' size={24}></AntDesign>
+              </View>  
                                     
           </View>
 
@@ -617,14 +623,22 @@ const styles = StyleSheet.create({
                 justifyContent:'center',
                 // marginBottom:"5%",
               },
-              titleText:{
-                fontSize:40,
-                textAlign:"center",
+              contenedorTitle:{
+                display:'flex',
+                flexDirection:'row',
+                justifyContent:'center',
+                alignItems:'center',
                 backgroundColor:'orange',
                 borderWidth:1,
                 width:'95%',
                 margin:10,
                 borderRadius:10
+              },
+              titleText:{
+                fontSize:40,
+                textAlign:"center",
+                
+                right:0
                 },
     ViewListTareas:{
       backgroundColor:"rgb(241, 237, 236)",

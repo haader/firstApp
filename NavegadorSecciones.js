@@ -93,7 +93,7 @@ const NavegadorSecciones=({navigation})=>{
                                 //     // //ScreenTask
                                 //     <ScreenTask screnName={sectionName} dbName={sectionName}></ScreenTask>
                                 // }}
-                                onPress={() => navigation.navigate('Screen2',{ propName: sectionName})}
+                                onPress={() => navigation.navigate('Screen2',{ propName: sectionName, iconName: iconName})}
 
                                 //onPress={() => {setShowSimpleScreen(true);setShowListSecciones(!ShowListSecciones)}}
                                 >
@@ -109,7 +109,7 @@ const NavegadorSecciones=({navigation})=>{
 
                 </View>
                   
-                    <Text>{sectionName.replaceAll('_',' ')}</Text>
+                    <Text style={{fontWeight:200,textAlign:'center'}}>{sectionName.replaceAll('_',' ')}</Text>
             </View>
         );
     }
@@ -161,11 +161,12 @@ const NavegadorSecciones=({navigation})=>{
 
     function Screen2({navigation,route }) {
       const propName = route.params?.propName;
+      const iconName= route.params?.iconName;
   return (
     <View style={{height:'100%'}}>
       
-      <ScreenTask screnName={propName} dbName={propName} />
-      <Button title="Volver atrás" onPress={() => navigation.goBack()} />
+      <ScreenTask icon={iconName} screnName={propName} dbName={propName} />
+      <Button title="Volver" onPress={() => navigation.goBack()} />
     </View>
   );
 }
